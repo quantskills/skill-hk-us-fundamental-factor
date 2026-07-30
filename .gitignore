@@ -1,0 +1,23 @@
+# macOS and Python caches
+.DS_Store
+__pycache__/
+*.py[cod]
+
+# Local credentials and environment files
+.env
+.env.*
+*.pem
+*.key
+
+# Ad-hoc runtime outputs
+outputs/
+outputs_live/
+
+# Large full-universe extracts (kept locally; reproducible via the scripts)
+outputs_full/raw_*.csv
+outputs_full/fundamental_factor_panel.csv
+outputs_full/factor_coverage.csv
+
+# Large historical price cache; retain compact backtest results
+backtest_full/daily_prices.parquet
+
