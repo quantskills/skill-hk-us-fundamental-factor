@@ -151,8 +151,8 @@ Counts depend on source coverage and run date and may change in future releases.
 
 ## GitHub 上传说明 / GitHub Upload Notes
 
-仓库中的 `.gitignore` 会排除全样本原始数据、完整因子面板及历史日行情缓存，以避免提交体积过大的文件；本地文件不会被删除。小型模拟/实盘示例、质量报告、Rank IC、收益曲线及回测指标仍可正常上传。全样本数据可通过上述命令重新生成。  
-The included `.gitignore` excludes full-universe raw extracts, the complete factor panel, and the historical daily-price cache without deleting local files. Small examples, quality reports, Rank IC, equity curves, and backtest metrics remain uploadable. Full-sample data can be regenerated with the commands above.
+本仓库包含全样本原始数据、完整因子面板、历史日行情缓存、Rank IC、收益曲线及回测指标，以支持结果复核和完整复现。`.gitignore` 仅排除本地凭据、密钥、临时输出和系统缓存。  
+This repository includes full-universe raw extracts, the complete factor panel, historical daily-price cache, Rank IC, equity curves, and backtest metrics for verification and reproducibility. The `.gitignore` excludes only local credentials, keys, ad-hoc outputs, and system caches.
 
 ## 研究规范 / Research Safeguards
 

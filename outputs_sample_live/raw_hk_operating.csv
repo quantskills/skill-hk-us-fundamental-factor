@@ -1,0 +1,17 @@
+﻿symbol,is_final,financial_year,financial_period_end_date,report_type,data_type,consol_basis,report_source,item_name,is_pershare_item,is_percent_item,item_unit,item_currency,item_num
+0005.HK,1,2025,20251231,Original To Original,,Consolidated Only,,Net Interest Margin - Total - %,False,True,Percentage,,1.59
+0005.HK,1,2025,20251231,Original To Original,,Consolidated Only,,Net Interest Spread - Total - %,False,True,Percentage,,1.36
+0005.HK,1,2025,20251231,Original To Original,,Consolidated Only,,Efficiency Ratio - Total - %,False,True,Percentage,,5.34e-05
+0005.HK,1,2025,20251231,Recent To Recent,,Consolidated Only,,Net Interest Margin - Total - %,False,True,Percentage,,1.59
+0005.HK,1,2025,20251231,Recent To Recent,,Consolidated Only,,Net Interest Spread - Total - %,False,True,Percentage,,1.36
+0005.HK,1,2025,20251231,Recent To Recent,,Consolidated Only,,Efficiency Ratio - Total - %,False,True,Percentage,,5.34e-05
+0005.HK,1,2025,20251231,Original To Original,Original,Consolidated Only,GBR ARS,Net Interest Margin - Total - %,False,True,Percentage,,1.59
+0005.HK,1,2025,20251231,Original To Original,Original,Consolidated Only,GBR ARS,Net Interest Spread - Total - %,False,True,Percentage,,1.36
+0005.HK,1,2025,20251231,Original To Original,Original,Consolidated Only,GBR ARS,Efficiency Ratio - Total - %,False,True,Percentage,,5.34e-05
+0005.HK,1,2025,20251231,Recent To Recent,Original,Consolidated Only,GBR ARS,Net Interest Margin - Total - %,False,True,Percentage,,1.59
+0005.HK,1,2025,20251231,Recent To Recent,Original,Consolidated Only,GBR ARS,Net Interest Spread - Total - %,False,True,Percentage,,1.36
+0005.HK,1,2025,20251231,Recent To Recent,Original,Consolidated Only,GBR ARS,Efficiency Ratio - Total - %,False,True,Percentage,,5.34e-05
+0700.HK,1,2025,20251231,Original To Original,Original,Consolidated Only,HKG ARS,Advertisement Revenue - Total,False,False,Units,CNY,144973.0
+0700.HK,1,2025,20251231,Original To Original,Original,Consolidated Only,HKG ARS,Monthly Active Users (MAU) - Total,False,False,No scaling,,1926.0
+0700.HK,1,2025,20251231,Recent To Recent,Original,Consolidated Only,HKG ARS,Advertisement Revenue - Total,False,False,Units,CNY,144973.0
+0700.HK,1,2025,20251231,Recent To Recent,Original,Consolidated Only,HKG ARS,Monthly Active Users (MAU) - Total,False,False,No scaling,,1926.0

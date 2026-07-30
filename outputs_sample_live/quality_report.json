@@ -1,0 +1,38 @@
+{
+  "status": "PASS",
+  "mode": "api",
+  "rows": 4,
+  "duplicate_keys": 0,
+  "missing_factor_counts": {
+    "quality": 2,
+    "value": 0,
+    "growth": 4,
+    "momentum": 0,
+    "low_risk": 0
+  },
+  "warnings": [
+    "Factor unavailable for all selected stocks: growth"
+  ],
+  "sdk_version": "0.0.12",
+  "core_factors": [
+    "value",
+    "momentum",
+    "low_risk"
+  ],
+  "markets": [
+    "hk",
+    "us"
+  ],
+  "symbol_count": 4,
+  "eligible_symbol_count": 4,
+  "eligible_by_market": {
+    "hk": 2,
+    "us": 2
+  },
+  "symbols_preview": [
+    "0700.HK",
+    "0005.HK",
+    "AAPL",
+    "MSFT"
+  ]
+}

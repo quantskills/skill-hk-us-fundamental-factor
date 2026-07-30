@@ -1,0 +1,17 @@
+{
+  "status": "PASS",
+  "checks": {
+    "required_files": true,
+    "nonempty_panel": true,
+    "required_columns": true,
+    "unique_keys": true,
+    "valid_markets": true,
+    "eligible_sample_nonempty": true,
+    "eligible_composite_complete": true,
+    "ineligible_composite_empty": true,
+    "percentile_range": true,
+    "fixed_core_factor_rule": true,
+    "fixed_composite_method": true,
+    "quality_report_pass": true
+  }
+}

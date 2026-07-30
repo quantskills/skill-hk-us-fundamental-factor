@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "mode": "mock",
+  "rows": 12,
+  "duplicate_keys": 0,
+  "missing_factor_counts": {
+    "quality": 0,
+    "value": 0,
+    "growth": 0,
+    "momentum": 0,
+    "low_risk": 0
+  },
+  "warnings": [],
+  "sdk_version": null,
+  "core_factors": [
+    "value",
+    "momentum",
+    "low_risk"
+  ],
+  "markets": [
+    "hk",
+    "us"
+  ],
+  "symbol_count": 12,
+  "eligible_symbol_count": 12,
+  "eligible_by_market": {
+    "hk": 6,
+    "us": 6
+  },
+  "symbols_preview": [
+    "0700.HK",
+    "0005.HK",
+    "1299.HK",
+    "2318.HK",
+    "0388.HK",
+    "0941.HK",
+    "AAPL",
+    "MSFT",
+    "JPM",
+    "NVDA",
+    "KO",
+    "XOM"
+  ]
+}

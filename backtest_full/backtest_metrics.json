@@ -1,0 +1,33 @@
+{
+  "status": "PASS",
+  "method": "monthly momentum_60d + negative volatility_20d; next 21 trading-day return",
+  "start_date": "20240901",
+  "end_date": "20260728",
+  "price_rows": 3772026,
+  "metrics": {
+    "hk": {
+      "periods": 19,
+      "mean_rank_ic": 0.02914314732098003,
+      "icir": 0.516024629701379,
+      "positive_ic_rate": 0.7368421052631579,
+      "long_short_total_return": -0.5656533297642069,
+      "long_only_total_return": 0.245620380379024,
+      "max_drawdown": -0.5546356155615988,
+      "mean_top_quantile_turnover": 0.4471339238901527
+    },
+    "us": {
+      "periods": 19,
+      "mean_rank_ic": 0.057331998130695346,
+      "icir": 0.41076873849913353,
+      "positive_ic_rate": 0.5263157894736842,
+      "long_short_total_return": -0.630720805666783,
+      "long_only_total_return": 0.03457996858192125,
+      "max_drawdown": -0.6413856526630582,
+      "mean_top_quantile_turnover": 0.4006632077216573
+    }
+  },
+  "limitations": [
+    "Validates the price-based momentum/low-risk subfactor, not the latest-only value snapshot.",
+    "US close is unadjusted because the documented US daily endpoint does not expose adjusted close."
+  ]
+}

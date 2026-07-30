@@ -1,0 +1,13 @@
+﻿market,symbol,quality_components,value_components,growth_components,momentum_components,low_risk_components,factor_count,core_factor_count,eligible_for_composite,component_count
+hk,0700.HK,3,3,2,2,2,5,3,True,12
+hk,0005.HK,3,3,2,2,2,5,3,True,12
+hk,1299.HK,3,3,2,2,2,5,3,True,12
+hk,2318.HK,3,3,2,2,2,5,3,True,12
+hk,0388.HK,3,3,2,2,2,5,3,True,12
+hk,0941.HK,3,3,2,2,2,5,3,True,12
+us,AAPL,3,3,2,2,2,5,3,True,12
+us,MSFT,3,3,2,2,2,5,3,True,12
+us,JPM,3,3,2,2,2,5,3,True,12
+us,NVDA,3,3,2,2,2,5,3,True,12
+us,KO,3,3,2,2,2,5,3,True,12
+us,XOM,3,3,2,2,2,5,3,True,12
