@@ -149,6 +149,11 @@ This backtest validates only the price-based momentum/low-risk subfactor; it nev
 数量取决于数据源覆盖范围和运行日期，未来可能变化。  
 Counts depend on source coverage and run date and may change in future releases.
 
+## GitHub 上传说明 / GitHub Upload Notes
+
+仓库中的 `.gitignore` 会排除全样本原始数据、完整因子面板及历史日行情缓存，以避免提交体积过大的文件；本地文件不会被删除。小型模拟/实盘示例、质量报告、Rank IC、收益曲线及回测指标仍可正常上传。全样本数据可通过上述命令重新生成。  
+The included `.gitignore` excludes full-universe raw extracts, the complete factor panel, and the historical daily-price cache without deleting local files. Small examples, quality reports, Rank IC, equity curves, and backtest metrics remain uploadable. Full-sample data can be regenerated with the commands above.
+
 ## 研究规范 / Research Safeguards
 
 - 明确股票池、日期、预测周期与决策场景 / Define universe, date, horizon, and decision context
