@@ -1,60 +1,53 @@
-# HK-US Fundamental Factor Skill
+# 港美股基本面因子技能 / HK-US Fundamental Factor Skill
 
-A reproducible PandaAI skill for building, auditing, and validating standardized
-fundamental-factor panels across Hong Kong and US equities.
+一个可复现的 PandaAI 技能，用于构建、审计及验证港股与美股的标准化基本面因子面板。  
+A reproducible PandaAI skill for building, auditing, and validating standardized fundamental-factor panels across Hong Kong and US equities.
 
-The skill separates three questions that are often incorrectly combined:
+本技能明确区分三个问题：股票相对本地市场的因子表现、底层数据的完整性与可靠性，以及具备历史可检验条件的子因子能否预测未来收益。  
+The skill separates factor strength relative to the local market, supporting-data quality, and the forward-return behavior of historically testable subfactors.
 
-1. How strong is a stock's factor profile relative to its local market?
-2. How complete and reliable is the supporting data?
-3. Does the historically testable subfactor exhibit useful forward-return behavior?
+## 核心功能 / Features
 
-## Features
+- 支持港股、美股、指定股票及全样本运行 / HK, US, selected-symbol, and full-universe support
+- 分市场缩尾与标准化 / Market-specific winsorization and standardization
+- 质量、价值、成长、动量及低风险因子 / Quality, value, growth, momentum, and low-risk factors
+- 固定可比核心复合因子 / Fixed comparable core composite
+- 成分与因子覆盖率诊断 / Component and factor coverage diagnostics
+- 保留缺失值，不以零替代 / Missing values remain missing rather than being replaced with zero
+- 时点与前视偏差检查 / Point-in-time and look-ahead-bias checks
+- Rank IC、ICIR、分组收益、净值、回撤及换手率分析 / Rank IC, ICIR, quantile return, NAV, drawdown, and turnover analysis
+- 确定性模拟模式与 API 实盘数据模式 / Deterministic mock mode and API-backed live mode
+- 自动验收及独立交互式 HTML 报告 / Automated acceptance testing and self-contained interactive HTML reporting
 
-- Hong Kong and US equity support
-- Full-universe or selected-symbol execution
-- Market-specific winsorization and standardization
-- Quality, value, growth, momentum, and low-risk factors
-- Fixed comparable composite using value, momentum, and low risk
-- Explicit component and factor coverage diagnostics
-- Missing values preserved rather than replaced with zero
-- Point-in-time and look-ahead-bias checks
-- Rank IC, ICIR, quantile-return, NAV, drawdown, and turnover analysis
-- Deterministic mock mode and API-backed live mode
-- Automated delivery harness
-- Self-contained interactive HTML report
+## 因子构建 / Factor Construction
 
-## Factor construction
-
-| Factor | Example components | Direction |
+| 因子 / Factor | 示例成分 / Example components | 方向 / Direction |
 |---|---|---|
-| Quality | ROE, operating margin, accruals | Higher quality; lower accruals |
-| Value | Earnings yield, book-to-price, sales-to-EV | Higher is cheaper |
-| Growth | Revenue growth, earnings growth | Higher is stronger |
-| Momentum | 26-week and 52-week relative returns | Higher is stronger |
-| Low risk | Beta and volatility | Lower is stronger |
+| 质量 / Quality | ROE、营业利润率、应计项 / ROE, operating margin, accruals | 质量越高越好，应计项越低越好 / Higher quality; lower accruals |
+| 价值 / Value | 盈利收益率、账面市值比、销售额企业价值比 / Earnings yield, book-to-price, sales-to-EV | 越高代表越便宜 / Higher is cheaper |
+| 成长 / Growth | 营收增长、盈利增长 / Revenue and earnings growth | 越高越强 / Higher is stronger |
+| 动量 / Momentum | 26周及52周相对收益 / 26-week and 52-week relative returns | 越高越强 / Higher is stronger |
+| 低风险 / Low risk | Beta、波动率 / Beta and volatility | 越低越强 / Lower is stronger |
 
-Each raw feature is winsorized at the 5th and 95th percentiles and standardized
-within its own market. Hong Kong and US securities are never standardized
-together.
+原始特征在各自市场内按第 5/95 百分位缩尾并标准化，港股和美股不会混合标准化。  
+Raw features are winsorized at the 5th/95th percentiles and standardized within each market; HK and US securities are never standardized together.
 
-The comparable core composite is:
+核心复合因子为：
 
 ```text
 equal_weight(value, momentum, low_risk)
 ```
 
-A stock receives a core composite only when all three factors are available.
-Quality and growth remain optional diagnostics.
+只有三个核心因子均可用时才计算复合分；质量与成长因子作为补充诊断。  
+The core composite is assigned only when all three factors are available; quality and growth remain optional diagnostics.
 
-## Repository structure
+## 目录结构 / Repository Structure
 
 ```text
 skill-hk-us-fundamental-factor/
 ├── SKILL.md
 ├── README.md
-├── agents/
-│   └── openai.yaml
+├── agents/openai.yaml
 ├── scripts/
 │   ├── build_factors.py
 │   ├── backtest.py
@@ -68,134 +61,115 @@ skill-hk-us-fundamental-factor/
 └── backtest_full/
 ```
 
-## Requirements
+## 环境要求 / Requirements
 
 - Python 3.10+
 - `pandas`
 - `numpy`
 - `pyarrow`
-- `panda_data>=0.0.9,<0.1` for live API execution
-
-Install the PandaData SDK:
+- 实盘 API 模式需要 / Live API mode requires `panda_data>=0.0.9,<0.1`
 
 ```bash
 pip install "panda_data>=0.0.9,<0.1"
 ```
 
-## Authentication
+## 身份认证与安全 / Authentication & Security
 
-Set credentials outside the repository:
+请在仓库外配置环境变量；切勿提交真实凭据、访问令牌、`.env` 文件或私钥。  
+Set credentials outside the repository. Never commit credentials, access tokens, `.env` files, or private keys.
 
 ```bash
 export PANDA_DATA_USERNAME="your_username"
 export PANDA_DATA_PASSWORD="your_password"
 ```
 
-Never commit credentials, access tokens, `.env` files, or private keys.
+## 使用方法 / Usage
 
-## Usage
-
-### Deterministic mock run
+### 模拟数据 / Deterministic Mock Run
 
 ```bash
-python scripts/build_factors.py \
-  --mode mock \
-  --market both \
-  --output-dir outputs
-
+python scripts/build_factors.py --mode mock --market both --output-dir outputs
 python scripts/harness.py --output-dir outputs
 ```
 
-### Selected live symbols
+### 指定股票实盘数据 / Selected Live Symbols
 
 ```bash
 python scripts/build_factors.py \
-  --mode api \
-  --market both \
+  --mode api --market both \
   --symbols 0700.HK,0005.HK,AAPL,MSFT \
-  --start-year 2023 \
-  --end-year 2025 \
+  --start-year 2023 --end-year 2025 \
   --output-dir outputs_live
 
 python scripts/harness.py --output-dir outputs_live
 ```
 
-### Full HK-US universe
+### 港美股全样本 / Full HK-US Universe
 
 ```bash
 python scripts/build_factors.py \
-  --mode api \
-  --market both \
-  --full-universe \
-  --start-year 2023 \
-  --end-year 2025 \
+  --mode api --market both --full-universe \
+  --start-year 2023 --end-year 2025 \
   --output-dir outputs_full
 
 python scripts/harness.py --output-dir outputs_full
 ```
 
-### Historical price-subfactor backtest
+### 历史价格子因子回测 / Historical Price-Subfactor Backtest
 
 ```bash
 python scripts/backtest.py \
-  --start-date 20240901 \
-  --end-date 20260728 \
+  --start-date 20240901 --end-date 20260728 \
   --output-dir backtest_full
 ```
 
-The historical backtest validates the price-based momentum/low-risk subfactor.
-It does not backfill the latest value snapshot into earlier dates.
+该回测只验证价格型动量/低风险子因子，不会把当前价值快照回填至历史日期。  
+This backtest validates only the price-based momentum/low-risk subfactor; it never backfills the latest value snapshot into earlier dates.
 
-## Main outputs
+## 主要产出 / Main Outputs
 
-| File | Description |
+| 文件 / File | 说明 / Description |
 |---|---|
-| `fundamental_factor_panel.csv` | Raw components, standardized factors, composite scores, and market percentiles |
-| `factor_coverage.csv` | Per-stock component counts and composite eligibility |
-| `quality_report.json` | Coverage, duplicates, warnings, and SDK metadata |
-| `harness_report.json` | Automated acceptance-test result |
-| `rank_ic_series.csv` | Monthly cross-sectional Rank IC |
-| `equity_curve.csv` | Quantile returns, long-only and long-short NAV, and turnover |
-| `backtest_metrics.json` | ICIR, positive-IC rate, return, drawdown, and turnover summary |
-| `factor-report.html` | Self-contained interactive research report when using the packaged release |
+| `fundamental_factor_panel.csv` | 原始成分、标准化因子、复合分及市场百分位 / Raw components, standardized factors, composites, and market percentiles |
+| `factor_coverage.csv` | 个股成分数量与复合因子资格 / Component counts and composite eligibility |
+| `quality_report.json` | 覆盖率、重复值、警告及 SDK 信息 / Coverage, duplicates, warnings, and SDK metadata |
+| `harness_report.json` | 自动验收结果 / Automated acceptance-test result |
+| `rank_ic_series.csv` | 月度横截面 Rank IC / Monthly cross-sectional Rank IC |
+| `equity_curve.csv` | 分组收益、多头及多空净值、换手率 / Quantile returns, NAV, and turnover |
+| `backtest_metrics.json` | ICIR、正 IC 比率、收益、回撤及换手率 / ICIR, positive-IC rate, return, drawdown, and turnover |
+| `factor-report.html` | 独立交互式研究报告 / Self-contained interactive research report |
 
-## Full-sample reference run
+## 全样本参考结果 / Full-Sample Reference Run
 
-The included reference run contains:
+- 港美股候选证券 18,733 只 / 18,733 candidate securities
+- 核心复合因子合格证券 6,518 只 / 6,518 core-composite-eligible securities
+- 其中港股 2,269 只，美股 4,249 只 / 2,269 HK and 4,249 US securities
+- 历史价格子因子回测使用 5,487,555 条日行情 / 5,487,555 daily-price observations
 
-- 18,733 securities in the combined candidate panel
-- 6,518 securities eligible for the fixed core composite
-- 2,269 eligible Hong Kong securities
-- 4,249 eligible US securities
-- 5,487,555 historical daily-price observations used for the price-subfactor backtest
+数量取决于数据源覆盖范围和运行日期，未来可能变化。  
+Counts depend on source coverage and run date and may change in future releases.
 
-Counts reflect the source coverage and run date; they may change in future API
-releases.
+## 研究规范 / Research Safeguards
 
-## Research safeguards
+- 明确股票池、日期、预测周期与决策场景 / Define universe, date, horizon, and decision context
+- 检查输入可得性并排除未来信息 / Verify data availability and reject future information
+- 报告请求、返回、合格与排除样本数 / Report requested, returned, eligible, and excluded samples
+- 核查因子方向、尺度、成分及缺失值规则 / Verify direction, scaling, components, and missing-data rules
+- 评估 IC、分组单调性、净值、回撤及换手率 / Evaluate IC, monotonicity, NAV, drawdown, and turnover
+- 至少测试两种合理替代设定 / Test at least two reasonable alternative specifications
+- 检查极端股票是否主导结果 / Inspect extreme-security dominance
+- 区分有证据、弱证据及不受支持的结论 / Separate supported, weak, and unsupported claims
 
-The skill requires a substantive research gate before producing conclusions:
+## 局限性 / Limitations
 
-- define universe, date, horizon, and decision context;
-- verify input availability and reject future information;
-- report requested, returned, eligible, and excluded samples;
-- verify factor direction, scaling, components, and missing-data rules;
-- evaluate IC, quantile monotonicity, NAV, drawdown, and turnover;
-- test at least two reasonable alternative specifications;
-- inspect whether extreme securities dominate results;
-- distinguish supported findings from weak or unsupported claims.
+- PandaData SDK 不同版本可能调整字段名 / Field names may change across SDK versions
+- 部分股票可能缺少成长或质量数据 / Growth or quality components may be unavailable
+- 当前财务快照不得视为历史观测 / Current financial snapshots are not historical observations
+- 美股日行情接口不提供复权收盘价，历史收益分析需谨慎处理公司行动 / The documented US daily endpoint lacks adjusted close, so corporate actions need care
+- 百分位为市场内相对值，不应直接进行全球比较 / Percentiles are market-relative
+- 本项目仅用于研究与数据处理，不构成投资建议或自动交易系统 / This project is for research and data processing, not investment advice or an automated trading system
 
-## Limitations
+## 许可 / License
 
-- Some PandaData fields may change names across SDK versions.
-- Growth or quality components may be unavailable for parts of the universe.
-- Current market-financial snapshots must not be treated as historical observations.
-- The documented US daily endpoint does not expose an adjusted close, so corporate
-  actions require additional care in historical return analysis.
-- Percentiles are market-relative and should not be compared globally.
-- This project is a research and data-processing tool, not an investment
-  recommendation or automated trading system.
-
-## License
-
-Add the repository's intended license before public distribution.
+公开发布前请添加适用的开源许可证。  
+Add the intended open-source license before public distribution.
