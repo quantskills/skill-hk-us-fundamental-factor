@@ -1,0 +1,4 @@
+interface:
+  display_name: "HK-US Fundamental Factor Panel"
+  short_description: "Build standardized HK-US fundamental factor panels"
+  default_prompt: "Use $skill-hk-us-fundamental-factor. Complete its mandatory research gate before calculating or interpreting results; verify time alignment, coverage, factor direction, and whether the request is a screen or a backtest."
