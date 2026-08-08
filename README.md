@@ -15,6 +15,7 @@ The skill separates factor strength relative to the local market, supporting-dat
 - 成分与因子覆盖率诊断 / Component and factor coverage diagnostics
 - 保留缺失值，不以零替代 / Missing values remain missing rather than being replaced with zero
 - 时点与前视偏差检查 / Point-in-time and look-ahead-bias checks
+- 历史成分状态、可交易性及 S4 偏差标注 / Historical membership, tradeability, and S4 bias status
 - Rank IC、ICIR、分组收益、净值、回撤及换手率分析 / Rank IC, ICIR, quantile return, NAV, drawdown, and turnover analysis
 - 确定性模拟模式与 API 实盘数据模式 / Deterministic mock mode and API-backed live mode
 - 自动验收及独立交互式 HTML 报告 / Automated acceptance testing and self-contained interactive HTML reporting
@@ -123,6 +124,9 @@ python scripts/backtest.py \
   --output-dir backtest_full
 ```
 
+如有历史成分数据，增加 `--constituent-history-csv data/constituent_history.csv`。未提供时，系统使用实际价格/交易状态作为股票池代理，并将 S4 标记为轻微幸存者偏差，而非标签泄漏。
+Add `--constituent-history-csv data/constituent_history.csv` when dated membership is available. Otherwise, observed price/trade status is used as a proxy and S4 is labeled minor survivorship bias, not label leakage.
+
 该回测只验证价格型动量/低风险子因子，不会把当前价值快照回填至历史日期。  
 This backtest validates only the price-based momentum/low-risk subfactor; it never backfills the latest value snapshot into earlier dates.
 
@@ -137,6 +141,7 @@ This backtest validates only the price-based momentum/low-risk subfactor; it nev
 | `rank_ic_series.csv` | 月度横截面 Rank IC / Monthly cross-sectional Rank IC |
 | `equity_curve.csv` | 分组收益、多头及多空净值、换手率 / Quantile returns, NAV, and turnover |
 | `backtest_metrics.json` | ICIR、正 IC 比率、收益、回撤及换手率 / ICIR, positive-IC rate, return, drawdown, and turnover |
+| `universe_membership.csv` | 个股首尾观察日、成分天数及股票池来源 / First/last observation, constituent days, and universe source |
 | `factor-report.html` | 独立交互式研究报告 / Self-contained interactive research report |
 
 ## 全样本参考结果 / Full-Sample Reference Run

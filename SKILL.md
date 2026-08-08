@@ -20,11 +20,11 @@ an evidence ledger; a silent assumption does not count as a completed check:
 
 1. Confirm the requested markets, stock universe, observation date, and forward-return horizon.
 2. Verify that every input was available by the stated observation date; reject future filings or current snapshots used as historical data.
-3. Report total universe, eligible universe, market-level coverage, and unavailable factors.
+3. Report total universe, eligible universe, historical constituent source, market-level coverage, and unavailable factors.
 4. Confirm factor direction, winsorization, within-market standardization, and the fixed core-factor rule.
 5. Read factor strength together with component coverage; never turn missing data into neutral evidence.
 6. Decide whether the request is a current cross-sectional screen or a historical backtest. Do not substitute one for the other.
-7. For a backtest, inspect Rank IC, ICIR, positive-IC rate, quintile monotonicity, long-only and long-short curves, drawdown, turnover, and out-of-sample behavior.
+7. For a backtest, inspect historical constituent state, Rank IC, ICIR, positive-IC rate, quintile monotonicity, long-only and long-short curves, drawdown, turnover, and out-of-sample behavior. Classify S4 as minor survivorship bias—not label leakage—when dated membership is unavailable.
 8. Stress at least two alternatives among holding horizon, rebalance frequency,
    winsorization, liquidity filter, and factor weighting.
 9. Inspect the three largest positive and negative score drivers and determine
@@ -53,7 +53,7 @@ For a single-stock lookup, retain it internally and surface every failure.
 ## Workflow
 
 1. Normalize symbols and separate Hong Kong and US stocks before standardization.
-2. Read [references/api-map.md](references/api-map.md) before changing endpoint or field mappings. Read [references/runtime.md](references/runtime.md) when installing the SDK or configuring credentials.
+2. Read [references/api-map.md](references/api-map.md) before changing endpoint or field mappings. Read [references/methodology.md](references/methodology.md) before historical validation. Read [references/runtime.md](references/runtime.md) when installing the SDK or configuring credentials.
 3. Run `scripts/build_factors.py`. Use `--mode mock` for deterministic verification and `--mode api` for PandaAI.
 4. Convert lower-is-better inputs such as accruals, beta, and volatility to negative orientation.
 5. Winsorize each raw feature at the 5th/95th percentiles, then z-score within each market. Never standardize across currencies.
@@ -63,6 +63,7 @@ For a single-stock lookup, retain it internally and surface every failure.
 9. Run `scripts/backtest.py` to validate the historical momentum/low-risk subfactor
    with forward returns. Do not present the latest-only value snapshot as a
    historical backtest.
+10. Supply `--constituent-history-csv` when dated universe membership exists. Otherwise report the observed-price proxy and residual minor survivorship bias explicitly.
 
 ## Commands
 
@@ -84,6 +85,12 @@ python scripts/build_factors.py --mode api --market both --full-universe --start
 python scripts/backtest.py --start-date 20240901 --end-date 20260728 --output-dir backtest_full
 ```
 
+For point-in-time historical membership:
+
+```bash
+python scripts/backtest.py --start-date 20240901 --end-date 20260728 --constituent-history-csv data/constituent_history.csv --output-dir backtest_full
+```
+
 ## Outputs
 
 - `fundamental_factor_panel.csv`: raw components, standardized factors, fixed core composite, optional extended composite, and market percentile.
@@ -94,6 +101,7 @@ python scripts/backtest.py --start-date 20240901 --end-date 20260728 --output-di
 - `backtest_full/rank_ic_series.csv`: monthly cross-sectional Rank IC.
 - `backtest_full/equity_curve.csv`: quintile, long-only, long-short, drawdown-input, and turnover series.
 - `backtest_full/backtest_metrics.json`: ICIR, positive-IC rate, return, drawdown, and turnover summary.
+- `backtest_full/universe_membership.csv`: first/last observation, observed days, constituent days, and membership source by security.
 
 Interpret `composite_percentile` within `market`, not globally. The core composite always uses the same three factors—value, momentum, and low risk—so Hong Kong and US rows follow one scoring method. Treat quality and growth as optional diagnostics and never substitute zero for unavailable inputs.
 
@@ -109,4 +117,5 @@ and research aid, not a return forecast or an automated trading decision.
 
 Do not call the task complete unless `harness.py` passes, point-in-time status is
 explicit, requested and eligible universes are both reported, missing data stays
-visible, and every historical claim has reproducible IC and return-series files.
+visible, the S4 bias status is stated, and every historical claim has reproducible
+membership, IC, and return-series files.

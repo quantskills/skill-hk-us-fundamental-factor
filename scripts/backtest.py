@@ -15,6 +15,10 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--end-date", default="20260728")
     p.add_argument("--output-dir", default="backtest_full")
     p.add_argument("--reuse-price-cache", action="store_true")
+    p.add_argument(
+        "--constituent-history-csv", default="",
+        help="Optional daily point-in-time membership file with market,symbol,date,is_constituent.",
+    )
     return p.parse_args()
 
 
@@ -37,9 +41,59 @@ def prepare(frame: pd.DataFrame, market: str) -> pd.DataFrame:
     price_col = "alt_close" if market == "hk" and "alt_close" in frame else "close"
     frame["price"] = pd.to_numeric(frame[price_col], errors="coerce")
     frame["volume"] = pd.to_numeric(frame.get("volume"), errors="coerce")
+    trade_status = frame.get("trade_status", pd.Series("", index=frame.index)).astype("string")
+    inactive = trade_status.str.lower().str.contains("delist|suspend|halt|inactive", na=False)
+    frame["is_tradeable"] = ~inactive
     frame = frame.dropna(subset=["date", "symbol", "price"])
     frame = frame[frame["price"] > 0].sort_values(["symbol", "date"])
     return compute_features(frame)
+
+
+def apply_constituent_history(
+    frame: pd.DataFrame, constituent_history_csv: str
+) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
+    """Apply daily point-in-time membership or an explicit observed-history proxy."""
+    frame = frame.copy()
+    if constituent_history_csv:
+        history = pd.read_csv(constituent_history_csv)
+        required = {"market", "symbol", "date", "is_constituent"}
+        missing = required - set(history.columns)
+        if missing:
+            raise ValueError(f"Constituent history is missing columns: {sorted(missing)}")
+        history["market"] = history["market"].astype(str).str.lower()
+        history["symbol"] = history["symbol"].astype(str).str.upper()
+        history["date"] = pd.to_datetime(history["date"])
+        history["is_constituent"] = history["is_constituent"].astype("boolean")
+        history = history.drop_duplicates(["market", "symbol", "date"], keep="last")
+        frame = frame.merge(
+            history[["market", "symbol", "date", "is_constituent"]],
+            on=["market", "symbol", "date"], how="left", validate="many_to_one",
+        )
+        frame["constituent_source"] = "point_in_time_history"
+        bias = {
+            "s4_status": "controlled_with_point_in_time_constituents",
+            "survivorship_bias": "controlled",
+            "label_leakage": False,
+        }
+    else:
+        frame["is_constituent"] = frame["is_tradeable"] & frame["price"].notna()
+        frame["constituent_source"] = "observed_price_history_proxy"
+        bias = {
+            "s4_status": "minor_survivorship_bias",
+            "survivorship_bias": "minor; historical index membership file not supplied",
+            "label_leakage": False,
+        }
+    membership = (
+        frame.groupby(["market", "symbol"], as_index=False)
+        .agg(
+            first_observed_date=("date", "min"),
+            last_observed_date=("date", "max"),
+            observed_days=("date", "size"),
+            constituent_days=("is_constituent", lambda x: int(x.fillna(False).sum())),
+            constituent_source=("constituent_source", "first"),
+        )
+    )
+    return frame, membership, bias
 
 
 def compute_features(frame: pd.DataFrame) -> pd.DataFrame:
@@ -64,6 +118,10 @@ def monthly_backtest(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, d
     frame = frame.copy()
     frame["month"] = frame["date"].dt.to_period("M")
     rebalance = frame.groupby(["market", "symbol", "month"], as_index=False).tail(1)
+    rebalance = rebalance[
+        rebalance["is_tradeable"].fillna(False)
+        & rebalance["is_constituent"].fillna(False)
+    ].copy()
     rebalance["forward_21d"] = rebalance.groupby(["market", "month"])["forward_21d"].transform(
         lambda x: x.clip(x.quantile(0.01), x.quantile(0.99))
     )
@@ -82,7 +140,7 @@ def monthly_backtest(frame: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, d
         .reset_index()
     )
     ic["date"] = ic["month"].dt.to_timestamp("M")
-    ic = ic.drop(columns="month")
+    ic = ic.drop(columns="month").dropna(subset=["rank_ic"])
     quantile = (
         rebalance.groupby(["market", "month", "quantile"], as_index=False)["forward_21d"]
         .mean()
@@ -145,6 +203,8 @@ def main() -> None:
         prices = pd.read_parquet(cache)
         prices["date"] = pd.to_datetime(prices["date"])
         prices = compute_features(prices)
+        if "is_tradeable" not in prices:
+            prices["is_tradeable"] = True
     else:
         api = init_api()
         hk = api.get_hk_daily(
@@ -159,9 +219,13 @@ def main() -> None:
         prices[["market", "date", "symbol", "price", "volume"]].to_parquet(
             cache, index=False
         )
+    prices, membership, bias_assessment = apply_constituent_history(
+        prices, args.constituent_history_csv
+    )
     ic, curve, metrics = monthly_backtest(prices)
     ic.to_csv(out / "rank_ic_series.csv", index=False, encoding="utf-8-sig")
     curve.to_csv(out / "equity_curve.csv", index=False, encoding="utf-8-sig")
+    membership.to_csv(out / "universe_membership.csv", index=False, encoding="utf-8-sig")
     (out / "backtest_metrics.json").write_text(
         json.dumps(
             {
@@ -170,10 +234,13 @@ def main() -> None:
                 "start_date": args.start_date,
                 "end_date": args.end_date,
                 "price_rows": len(prices),
+                "constituent_history_supplied": bool(args.constituent_history_csv),
+                "bias_assessment": bias_assessment,
                 "metrics": metrics,
                 "limitations": [
                     "Validates the price-based momentum/low-risk subfactor, not the latest-only value snapshot.",
                     "US close is unadjusted because the documented US daily endpoint does not expose adjusted close.",
+                    "Without --constituent-history-csv, S4 retains minor survivorship bias from the observed-price universe; this is not label leakage.",
                 ],
             },
             indent=2,

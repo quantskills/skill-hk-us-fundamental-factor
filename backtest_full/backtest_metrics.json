@@ -4,6 +4,12 @@
   "start_date": "20240901",
   "end_date": "20260728",
   "price_rows": 3772026,
+  "constituent_history_supplied": false,
+  "bias_assessment": {
+    "s4_status": "minor_survivorship_bias",
+    "survivorship_bias": "minor; historical index membership file not supplied",
+    "label_leakage": false
+  },
   "metrics": {
     "hk": {
       "periods": 19,
@@ -17,8 +23,8 @@
     },
     "us": {
       "periods": 19,
-      "mean_rank_ic": 0.057331998130695346,
-      "icir": 0.41076873849913353,
+      "mean_rank_ic": 0.0573322453791664,
+      "icir": 0.41077045049769373,
       "positive_ic_rate": 0.5263157894736842,
       "long_short_total_return": -0.630720805666783,
       "long_only_total_return": 0.03457996858192125,
@@ -28,6 +34,7 @@
   },
   "limitations": [
     "Validates the price-based momentum/low-risk subfactor, not the latest-only value snapshot.",
-    "US close is unadjusted because the documented US daily endpoint does not expose adjusted close."
+    "US close is unadjusted because the documented US daily endpoint does not expose adjusted close.",
+    "Without --constituent-history-csv, S4 retains minor survivorship bias from the observed-price universe; this is not label leakage."
   ]
 }
