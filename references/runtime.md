@@ -3,7 +3,7 @@
 Install the latest public PandaData SDK:
 
 ```bash
-pip install "panda_data>=0.0.9,<0.1"
+pip install "panda_data==1.0.6"
 ```
 
 This skill is validated with public releases 0.0.9 and 0.0.12. The PandaAI `panda-data` repository mentions an internal/local 0.1.0 wheel, but that version is not currently published on public PyPI.

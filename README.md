@@ -68,10 +68,10 @@ skill-hk-us-fundamental-factor/
 - `pandas`
 - `numpy`
 - `pyarrow`
-- 实盘 API 模式需要 / Live API mode requires `panda_data>=0.0.9,<0.1`
+- 实盘 API 模式需要 / Live API mode requires `panda_data==1.0.6`
 
 ```bash
-pip install "panda_data>=0.0.9,<0.1"
+pip install "panda_data==1.0.6"
 ```
 
 ## 身份认证与安全 / Authentication & Security
@@ -183,3 +183,6 @@ This repository includes full-universe raw extracts, the complete factor panel, 
 
 公开发布前请添加适用的开源许可证。  
 Add the intended open-source license before public distribution.
+
+
+Pandadata 兼容维护：[abgyjaguo](https://github.com/abgyjaguo)，保留原项目作者署名。
