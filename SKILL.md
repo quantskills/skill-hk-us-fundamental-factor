@@ -119,3 +119,7 @@ Do not call the task complete unless `harness.py` passes, point-in-time status i
 explicit, requested and eligible universes are both reported, missing data stays
 visible, the S4 bias status is stated, and every historical claim has reproducible
 membership, IC, and return-series files.
+
+## Pandadata compatibility
+
+[Pandadata 1.0.6 compatibility](references/pandadata-compatibility.md) — exact SDK baseline, validation scope, and shared guidance for all supported agent runtimes.
